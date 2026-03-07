@@ -213,7 +213,7 @@ export function Layout() {
             <CompanyRail />
             <Sidebar />
           </div>
-          <div className="border-t border-r border-border px-3 py-2 bg-background">
+          <div className="border-t border-r border-border px-3 py-2 bg-sidebar">
             <div className="flex items-center gap-1">
               <SidebarNavItem
                 to="/docs"
@@ -248,7 +248,7 @@ export function Layout() {
               <Sidebar />
             </div>
           </div>
-          <div className="border-t border-r border-border px-3 py-2">
+          <div className="border-t border-r border-border px-3 py-2 bg-sidebar">
             <div className="flex items-center gap-1">
               <SidebarNavItem
                 to="/docs"
