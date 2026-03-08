@@ -7,7 +7,7 @@ export default defineConfig({
       "packages/adapters/claude-local",
       "packages/adapters/codex-local",
       "packages/adapters/cursor-local",
-      "packages/adapters/openclaw",
+      "packages/adapters/openclaw-gateway",
       "packages/adapters/opencode-local",
       "packages/adapters/pi-local",
       "server",
