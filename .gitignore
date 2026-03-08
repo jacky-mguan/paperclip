@@ -34,6 +34,13 @@ tmp/
 
 # Editor / tool temp files
 *.tmp
+*.log
 .vscode/
+.idea/
 .claude/settings.local.json
 .paperclip-local/
+docker/.ssh/
+scripts/docker/.ssh/
+
+# Pack artifacts
+*.tgz
