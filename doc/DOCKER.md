@@ -71,6 +71,8 @@ docker compose exec -it server claude login
 
 Complete the OAuth flow. The session persists in the `paperclip-data` volume across restarts.
 
+> **Important:** The server runs as the `paperclip` user (home dir `/paperclip`). Credentials are stored in `/paperclip/.claude/`. If you exec into the container as root and run `claude login`, the credentials land in `/root/.claude/` and agents will fail with "Not logged in". Always use `docker compose exec` (without `-u root`) so the login runs as the `paperclip` user.
+
 ### 5. Set up SSH keys for Git access
 
 Agents need SSH keys to clone and push to private repos:
@@ -155,6 +157,12 @@ docker compose exec -u root server chown -R paperclip:paperclip /paperclip
 
 **Claude CLI silently exits / produces no output**
 Claude isn't logged in inside the container. Run `docker compose exec -it server claude login`.
+
+**Agents fail with "Not logged in · Please run /login"**
+The server process runs as the `paperclip` user and reads credentials from `/paperclip/.claude/`. If you previously ran `claude login` as root (e.g. via `docker exec -u root` or `docker compose exec -u root`), the credentials are in `/root/.claude/` and inaccessible to the server. Fix: run `claude login` without the `-u root` flag so it authenticates as the `paperclip` user:
+```bash
+docker compose exec -it server claude login
+```
 
 **Agent can't clone repos**
 SSH keys aren't set up. Run `sudo ./scripts/docker-ssh-setup.sh` and add the public key to GitHub.
