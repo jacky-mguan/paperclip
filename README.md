@@ -160,7 +160,9 @@ By default, agents run on scheduled heartbeats and event-based triggers (task as
 
 ## Contributing
 
-Open a PR or issue on [GitHub](https://github.com/paperclipai/paperclip).
+We welcome contributions. See the [contributing guide](CONTRIBUTING.md) for details.
+
+<br/>
 
 ## Community
 

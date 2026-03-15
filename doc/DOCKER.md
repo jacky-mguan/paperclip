@@ -195,4 +195,22 @@ For CI or testing a fresh install:
 ./scripts/docker-onboard-smoke.sh
 ```
 
-See `Dockerfile.onboard-smoke` for details. Opens on `http://localhost:3131` by default.
+Open: `http://localhost:3131` (default smoke host port)
+
+Useful overrides:
+
+```sh
+HOST_PORT=3200 PAPERCLIPAI_VERSION=latest ./scripts/docker-onboard-smoke.sh
+PAPERCLIP_DEPLOYMENT_MODE=authenticated PAPERCLIP_DEPLOYMENT_EXPOSURE=private ./scripts/docker-onboard-smoke.sh
+```
+
+Notes:
+
+- Persistent data is mounted at `./data/docker-onboard-smoke` by default.
+- Container runtime user id defaults to your local `id -u` so the mounted data dir stays writable while avoiding root runtime.
+- Smoke script defaults to `authenticated/private` mode so `HOST=0.0.0.0` can be exposed to the host.
+- Smoke script defaults host port to `3131` to avoid conflicts with local Paperclip on `3100`.
+- Smoke script also defaults `PAPERCLIP_PUBLIC_URL` to `http://localhost:<HOST_PORT>` so bootstrap invite URLs and auth callbacks use the reachable host port instead of the container's internal `3100`.
+- In authenticated mode, the smoke script defaults `SMOKE_AUTO_BOOTSTRAP=true` and drives the real bootstrap path automatically: it signs up a real user, runs `paperclipai auth bootstrap-ceo` inside the container to mint a real bootstrap invite, accepts that invite over HTTP, and verifies board session access.
+- Run the script in the foreground to watch the onboarding flow; stop with `Ctrl+C` after validation.
+- The image definition is in `Dockerfile.onboard-smoke`.

@@ -44,3 +44,7 @@ scripts/docker/.ssh/
 
 # Pack artifacts
 *.tgz
+
+# Playwright
+tests/e2e/test-results/
+tests/e2e/playwright-report/

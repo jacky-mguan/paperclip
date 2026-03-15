@@ -16,9 +16,11 @@ COPY packages/adapter-utils/package.json packages/adapter-utils/
 COPY packages/adapters/claude-local/package.json packages/adapters/claude-local/
 COPY packages/adapters/codex-local/package.json packages/adapters/codex-local/
 COPY packages/adapters/cursor-local/package.json packages/adapters/cursor-local/
+COPY packages/adapters/gemini-local/package.json packages/adapters/gemini-local/
 COPY packages/adapters/openclaw-gateway/package.json packages/adapters/openclaw-gateway/
 COPY packages/adapters/opencode-local/package.json packages/adapters/opencode-local/
 COPY packages/adapters/pi-local/package.json packages/adapters/pi-local/
+
 RUN pnpm install --frozen-lockfile
 
 FROM base AS build
@@ -31,15 +33,10 @@ RUN test -f server/dist/index.js || (echo "ERROR: server build output missing" &
 
 FROM base AS production
 WORKDIR /app
-
-# 1. Install system tools + create user (cached, rarely changes)
-RUN apt-get update && apt-get install -y --no-install-recommends gosu && rm -rf /var/lib/apt/lists/* \
-  && useradd -m -d /paperclip -s /bin/bash paperclip
-
-# 2. Install global CLI tools (cached unless version changes)
-ENV PNPM_HOME=/usr/local/share/pnpm
-ENV PATH=$PNPM_HOME:$PATH
-RUN pnpm add -g @anthropic-ai/claude-code@2.1.71 @openai/codex@0.111.0
+COPY --chown=node:node --from=build /app /app
+RUN npm install --global --omit=dev @anthropic-ai/claude-code@latest @openai/codex@latest opencode-ai \
+  && mkdir -p /paperclip \
+  && chown node:node /paperclip
 
 ENV NODE_ENV=production \
   HOME=/paperclip \
@@ -52,17 +49,10 @@ ENV NODE_ENV=production \
   PAPERCLIP_DEPLOYMENT_MODE=authenticated \
   PAPERCLIP_DEPLOYMENT_EXPOSURE=private
 
-# 3. Copy built app last (busts on every source change, doesn't bust steps 1-2)
-COPY --from=build /app /app
-RUN pnpm prune --prod \
-  && chown -R paperclip:paperclip /app /paperclip
-
-COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
 VOLUME ["/paperclip"]
 EXPOSE 3100
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
   CMD curl -fsS http://localhost:3100/api/health > /dev/null || exit 1
 
-ENTRYPOINT ["entrypoint.sh"]
+USER node
 CMD ["node", "--import", "./server/node_modules/tsx/dist/loader.mjs", "server/dist/index.js"]
