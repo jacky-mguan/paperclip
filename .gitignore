@@ -34,17 +34,19 @@ tmp/
 
 # Editor / tool temp files
 *.tmp
-*.log
 .vscode/
-.idea/
 .claude/settings.local.json
 .paperclip-local/
-docker/.ssh/
-scripts/docker/.ssh/
+/.idea/
+/.agents/
 
-# Pack artifacts
-*.tgz
+# Doc maintenance cursor
+.doc-review-cursor
 
 # Playwright
 tests/e2e/test-results/
 tests/e2e/playwright-report/
+tests/release-smoke/test-results/
+tests/release-smoke/playwright-report/
+.superset/
+.claude/worktrees/

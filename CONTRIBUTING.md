@@ -1,56 +1,74 @@
-# Contributing
+# Contributing Guide
 
-## Setup
+Thanks for wanting to contribute!
 
-```sh
-git clone https://github.com/paperclipai/paperclip.git
-cd paperclip
-pnpm install
-pnpm dev
-```
+We really appreciate both small fixes and thoughtful larger changes.
 
-API server starts at `http://localhost:3100`. Embedded PGlite is used automatically —
-no external database needed for local dev.
+## Two Paths to Get Your Pull Request Accepted
 
-## Verification
+### Path 1: Small, Focused Changes (Fastest way to get merged)
 
-Before submitting a PR, run the full check:
+- Pick **one** clear thing to fix/improve
+- Touch the **smallest possible number of files**
+- Make sure the change is very targeted and easy to review
+- All automated checks pass (including Greptile comments)
+- No new lint/test failures
 
-```sh
-pnpm -r typecheck   # no type errors
-pnpm test:run       # all tests pass
-pnpm build          # full build succeeds
-docker build .      # Docker image builds clean
-```
+These almost always get merged quickly when they're clean.
 
-## Pull Request Guidelines
+### Path 2: Bigger or Impactful Changes
 
-- Branch off `master`
-- Keep commits focused; one logical change per commit
-- Link to the relevant section of `doc/SPEC-implementation.md` when implementing spec behavior
-- Include before/after notes or screenshots for UI or behavior changes
-- Run verification above before opening the PR
-- For large or impactful changes, discuss in [Discord #dev](https://discord.gg/m4HZY7xNG3) first
+- **First** talk about it in Discord → #dev channel  
+  → Describe what you're trying to solve  
+  → Share rough ideas / approach
+- Once there's rough agreement, build it
+- In your PR include:
+  - Before / After screenshots (or short video if UI/behavior change)
+  - Clear description of what & why
+  - Proof it works (manual testing notes)
+  - All tests passing
+  - All Greptile + other PR comments addressed
 
-## Adding an Adapter
+PRs that follow this path are **much** more likely to be accepted, even when they're large.
 
-See the "Adding a New Adapter" section in [AGENTS.md](AGENTS.md) for step-by-step
-instructions. Each adapter lives in `packages/adapters/<name>/` and must include a
-`README.md`.
+## General Rules (both paths)
 
-## Docker Testing
+- Write clear commit messages
+- Keep PR title + description meaningful
+- One PR = one logical change (unless it's a small related group)
+- Run tests locally first
+- Be kind in discussions 😄
 
-To test the full Docker stack locally:
+## Writing a Good PR message
 
-```sh
-cp .env.example .env
-# Edit .env to fill in required secrets (BETTER_AUTH_SECRET, PAPERCLIP_AGENT_JWT_SECRET)
-docker compose up -d --build
-curl http://localhost:3100/api/health
-```
+Please include a "thinking path" at the top of your PR message that explains from the top of the project down to what you fixed. E.g.:
 
-See [doc/DOCKER.md](doc/DOCKER.md) for the full Docker guide.
+### Thinking Path Example 1:
 
-## Questions?
+> - Paperclip orchestrates ai-agents for zero-human companies
+> - There are many types of adapters for each LLM model provider
+> - But LLM's have a context limit and not all agents can automatically compact their context
+> - So we need to have an adapter-specific configuration for which adapters can and cannot automatically compact their context
+> - This pull request adds per-adapter configuration of compaction, either auto or paperclip managed
+> - That way we can get optimal performance from any adapter/provider in Paperclip
 
-Ask in [Discord #dev](https://discord.gg/m4HZY7xNG3) or open a [GitHub Discussion](https://github.com/paperclipai/paperclip/discussions).
+### Thinking Path Example 2:
+
+> - Paperclip orchestrates ai-agents for zero-human companies
+> - But humans want to watch the agents and oversee their work
+> - Human users also operate in teams and so they need their own logins, profiles, views etc.
+> - So we have a multi-user system for humans
+> - But humans want to be able to update their own profile picture and avatar
+> - But the avatar upload form wasn't saving the avatar to the file storage system
+> - So this PR fixes the avatar upload form to use the file storage service
+> - The benefit is we don't have a one-off file storage for just one aspect of the system, which would cause confusion and extra configuration
+
+Then have the rest of your normal PR message after the Thinking Path.
+
+This should include details about what you did, why you did it, why it matters & the benefits, how we can verify it works, and any risks.
+
+Please include screenshots if possible if you have a visible change. (use something like the [agent-browser skill](https://github.com/vercel-labs/agent-browser/blob/main/skills/agent-browser/SKILL.md) or similar to take screenshots). Ideally, you include before and after screenshots.
+
+Questions? Just ask in #dev — we're happy to help.
+
+Happy hacking!

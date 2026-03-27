@@ -1,4 +1,4 @@
-FROM node:24-slim AS base
+FROM node:lts-trixie-slim AS base
 RUN apt-get update \
   && apt-get install -y --no-install-recommends ca-certificates curl git openssh-client \
   && rm -rf /var/lib/apt/lists/*
@@ -21,7 +21,7 @@ COPY packages/adapters/openclaw-gateway/package.json packages/adapters/openclaw-
 COPY packages/adapters/opencode-local/package.json packages/adapters/opencode-local/
 COPY packages/adapters/pi-local/package.json packages/adapters/pi-local/
 COPY packages/plugins/sdk/package.json packages/plugins/sdk/
-COPY packages/plugins/create-paperclip-plugin/package.json packages/plugins/create-paperclip-plugin/
+COPY patches/ patches/
 
 RUN pnpm install --frozen-lockfile
 
